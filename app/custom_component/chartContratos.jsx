@@ -20,7 +20,7 @@ const chartData = [
   { meses: "Julho", desktop: 2},
   { meses: "Agosto", desktop: 2},
   { meses: "Setembro", desktop: 0},
-  { meses: "Outubro", desktop: 1},
+  { meses: "Outubro", desktop: 0},
   { meses: "Novembro", desktop: 0},
   { meses: "Dezembro", desktop: 0},
 ]
