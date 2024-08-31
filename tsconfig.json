@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/custom_component/chartContratos.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/contratos/custom_component/table_contract.jsx", "app/custom_component/chartContratos.jsx"],
   "exclude": ["node_modules"]
 }
