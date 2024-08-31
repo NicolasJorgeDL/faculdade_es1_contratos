@@ -27,7 +27,7 @@ export default function CardDashboard(props) {
         <CardTitle>{props.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="flex justify-center font-bold text-6xl">{props.content}</p>
+        <p className="flex justify-center font-bold text-6xl text-slate-700">{props.content}</p>
       </CardContent>
     </Card>
   );

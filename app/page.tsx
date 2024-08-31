@@ -1,4 +1,5 @@
 import CardDashboard from './custom_component/cardDashboard';
+import ChartContratos from './custom_component/chartContratos';
 
 export default function Home() {
   return (
@@ -9,9 +10,9 @@ export default function Home() {
           <CardDashboard title="Contratos Paralisados" content={4} status="paralisado"/>        
           <CardDashboard title="Contratos Cancelados" content={1} status="cancelado"/>        
       </div>
-      <div>
-
-        
+        <h1 className='text-6xl font-bold'>Contratos x Mes</h1>
+      <div className='flex w-1/2 border-4 border-slate-700 rounded-2xl'>
+        <ChartContratos />
       </div>
     </main>
   );
