@@ -13,8 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
+import { ArrowUpDown, CalendarIcon, ChevronDown, MoreHorizontal } from "lucide-react";
+import { DateRange } from "react-day-picker"
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -35,10 +35,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
+import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
+import { PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 function transformToDate(string) {
-  console.log(string);
 
   if (!string) {
     return new Date("1997", "01", "12");
@@ -47,6 +50,65 @@ function transformToDate(string) {
 
   return new Date(splitedDate[2], splitedDate[1] - 1, splitedDate[0]);
 }
+
+function percentageOfValue(value, payments){
+    
+  const totalPayment = payments.reduce(totalPay,0);
+  function totalPay(total, item){
+    return total + item.valor;
+  }
+  const porcentagem = totalPayment /value * 100;
+  return `${Math.round(porcentagem)}%`;
+}
+
+function DatePickerWithRange({className}) {
+  const [date, setDate] = React.useState({
+    from: new Date(2022, 1, 20),
+    to: addDays(new Date(2022, 1, 20), 20),
+  })
+
+  return (
+    <div className={cn("grid gap-2", className)}>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id="date"
+            variant={"outline"}
+            className={cn(
+              "w-[300px] justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
+            ) : (
+              <span>Pick a date</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={2}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
+
 
 const data = [
   {
@@ -94,7 +156,7 @@ const data = [
       },
       {
         forma: "pix",
-        valor: 500,
+        valor: 150,
         comprovante: "6158323",
       },
     ],
@@ -148,7 +210,7 @@ const data = [
       },
       {
         forma: "pix",
-        valor: 500,
+        valor: 2000,
         comprovante: "6158323",
       },
     ],
@@ -175,7 +237,7 @@ const data = [
       },
       {
         forma: "pix",
-        valor: 500,
+        valor: 2300,
         comprovante: "6158323",
       },
     ],
@@ -468,7 +530,7 @@ export const columns = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize text-center">{row.getValue("status")}</div>
     ),
   },
   {
@@ -502,7 +564,7 @@ export const columns = [
       );
     },
     cell: ({ row }) => (
-      <div className="lowercase">
+      <div className="lowercase text-center">
         {format(transformToDate(row.getValue("dtInicial")), "dd/MM/yyyy")}
       </div>
     ),
@@ -521,7 +583,7 @@ export const columns = [
       );
     },
     cell: ({ row }) => (
-      <div className="lowercase">
+      <div className="lowercase text-center">
         {format(transformToDate(row.getValue("dtFinal")), "dd/MM/yyyy")}
       </div>
     ),
@@ -547,7 +609,31 @@ export const columns = [
         currency: "BRL",
       }).format(valor);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-left font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "pagamentos",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Conclusão(%)
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const valor = parseFloat(row.getValue("valor"));
+      const payments = row.getValue("pagamentos");
+      
+      if(payments == []){
+        return <div>0%</div>
+      }
+
+      return <div className="text-center font-medium">{percentageOfValue(valor,payments)}</div>;
     },
   },
   {
@@ -608,7 +694,7 @@ export default function TableContract() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Pesquisar pelo objetivo"
           value={table.getColumn("objetivo")?.getFilterValue() ?? ""}
@@ -617,7 +703,9 @@ export default function TableContract() {
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
+        {DatePickerWithRange("")}
+      <Button >Novo Contrato</Button>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
@@ -642,11 +730,11 @@ export default function TableContract() {
                 );
               })}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -687,7 +775,7 @@ export default function TableContract() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Sem resultados.
                 </TableCell>
               </TableRow>
             )}
