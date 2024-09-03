@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from "react";
 import {
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -34,40 +34,397 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import { format } from "date-fns";
+
+function transformToDate(string) {
+  console.log(string);
+
+  if (!string) {
+    return new Date("1997", "01", "12");
+  }
+  const splitedDate = string.split("/");
+
+  return new Date(splitedDate[2], splitedDate[1] - 1, splitedDate[0]);
+}
 
 const data = [
   {
     id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
+    id: "ml198d",
+    objetivo: "Software de organização de arquivos",
+    descricao:
+      "A licença do software de ",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
   },
   {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
+    id: "ml198d",
+    objetivo: "Software de organização de arquivos",
+    descricao:
+      "A licença do software de ",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
   },
   {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
+    id: "ml198d",
+    objetivo: "Software de organização de arquivos",
+    descricao:
+      "A licença do software de ",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
   },
   {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
+    id: "ml198d",
+    objetivo: "Software de organização de arquivos",
+    descricao:
+      "A licença do software de ",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
   },
-]
+  {
+    id: "ml198d",
+    objetivo: "Software de organização de arquivos",
+    descricao:
+      "A licença do software de ",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "15gr65i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "04/02/2024",
+    dtFinal: "26/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  {
+    id: "u5ga84i9",
+    objetivo: "Atualização dos Sistemas Operacionais",
+    descricao:
+      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
+    dtInicial: "11/05/2024",
+    dtFinal: "14/08/2024",
+    valor: 4300,
+    status: "Em contratação",
+    gestor: "Alicia Freitas",
+    pagamentos: [
+      {
+        forma: "cartão de credito",
+        valor: 2000,
+        comprovante: "1272551",
+      },
+      {
+        forma: "pix",
+        valor: 500,
+        comprovante: "6158323",
+      },
+    ],
+    empresa: {
+      nome: "Torradeira TI",
+      responsavel: "Oliver Guerreiro",
+    },
+  },
+  // {
+  //   id: "3u1reuv4",
+  //   amount: 242,
+  //   status: "success",
+  //   email: "Abe45@gmail.com",
+  // },
+  // {
+  //   id: "derv1ws0",
+  //   amount: 837,
+  //   status: "processing",
+  //   email: "Monserrat44@gmail.com",
+  // },
+  // {
+  //   id: "5kma53ae",
+  //   amount: 874,
+  //   status: "success",
+  //   email: "Silas22@gmail.com",
+  // },
+  // {
+  //   id: "bhqecj4p",
+  //   amount: 721,
+  //   status: "failed",
+  //   email: "carmella@hotmail.com",
+  // },
+];
 
 // export type Payment = {
 //   id: string
@@ -77,70 +434,127 @@ const data = [
 // }
 
 export const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={
+  //         table.getIsAllPageRowsSelected() ||
+  //         (table.getIsSomePageRowsSelected() && "indeterminate")
+  //       }
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Status
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("status")}</div>
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "objetivo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Objetivo
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("objetivo")}</div>
+    ),
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "dtInicial",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Data de Inicio
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">
+        {format(transformToDate(row.getValue("dtInicial")), "dd/MM/yyyy")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "dtFinal",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Data de Finalização
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">
+        {format(transformToDate(row.getValue("dtFinal")), "dd/MM/yyyy")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "valor",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Valor
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
+      const valor = parseFloat(row.getValue("valor"));
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("pt-br", {
         style: "currency",
-        currency: "USD",
-      }).format(amount)
+        currency: "BRL",
+      }).format(valor);
 
-      return <div className="text-right font-medium">{formatted}</div>
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const payment = row.original;
 
       return (
         <DropdownMenu>
@@ -162,19 +576,16 @@ export const columns = [
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export default function TableContract() {
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -193,16 +604,16 @@ export default function TableContract() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue()) ?? ""}
+          placeholder="Pesquisar pelo objetivo"
+          value={table.getColumn("objetivo")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("objetivo")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -228,7 +639,7 @@ export default function TableContract() {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -248,7 +659,7 @@ export default function TableContract() {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -308,5 +719,5 @@ export default function TableContract() {
         </div>
       </div>
     </div>
-  )
+  );
 }
