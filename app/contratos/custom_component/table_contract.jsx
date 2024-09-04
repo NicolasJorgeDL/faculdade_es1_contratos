@@ -605,10 +605,11 @@ export const columns = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-center">Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Button
+                className="w-full"
                 variant="ghost"
                 onClick={() => {
                   table.options.setOpenEditDialog(true);
@@ -620,6 +621,7 @@ export const columns = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Button
+                className="w-full"
                 variant="ghost"
                 onClick={() => {
                   table.options.setOpenDetailDialog(true);
@@ -631,6 +633,7 @@ export const columns = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Button
+                className="w-full"
                 variant="ghost"
                 onClick={() => {
                   table.options.setPayDialog(true);
