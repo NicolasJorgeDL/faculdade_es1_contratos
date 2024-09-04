@@ -2,10 +2,6 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -16,16 +12,13 @@ import {
 import {
   ArrowUpDown,
   CalendarIcon,
-  ChevronDown,
   MoreHorizontal,
   PlusCircle,
 } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -86,10 +79,8 @@ function percentageOfValue(value, payments) {
 }
 
 function DatePickerWithRange({ className }, defaultValue) {
-  const [date, setDate] = React.useState(defaultValue);
+  const [date, setDate] = React.useState({});
 
-  console.log(defaultValue)
-  console.log("date",defaultValue)
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -106,10 +97,10 @@ function DatePickerWithRange({ className }, defaultValue) {
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(defaultValue.from, "dd/LL/y")} - {format(defaultValue.to, "dd/LL/y")}
+                  {format(date.from, "dd/LL/y")} - {format(date.to, "dd/LL/y")}
                 </>
               ) : (
-                format(defaultValue.from, "dd/LL/y")
+                format(date.from, "dd/LL/y")
               )
             ) : (
               <span>Selecione uma data</span>
@@ -123,7 +114,7 @@ function DatePickerWithRange({ className }, defaultValue) {
             
             mode="range"
             defaultMonth={defaultValue?.from}
-            selected={defaultValue}
+            selected={date}
             onSelect={setDate}
             numberOfMonths={2}
           />
@@ -480,62 +471,9 @@ const data = [
       responsavel: "Oliver Guerreiro",
     },
   },
-  // {
-  //   id: "3u1reuv4",
-  //   amount: 242,
-  //   status: "success",
-  //   email: "Abe45@gmail.com",
-  // },
-  // {
-  //   id: "derv1ws0",
-  //   amount: 837,
-  //   status: "processing",
-  //   email: "Monserrat44@gmail.com",
-  // },
-  // {
-  //   id: "5kma53ae",
-  //   amount: 874,
-  //   status: "success",
-  //   email: "Silas22@gmail.com",
-  // },
-  // {
-  //   id: "bhqecj4p",
-  //   amount: 721,
-  //   status: "failed",
-  //   email: "carmella@hotmail.com",
-  // },
 ];
 
-// export type Payment = {
-//   id: string
-//   amount: number
-//   status: "pending" | "processing" | "success" | "failed"
-//   email: string
-// }
-
 export const columns = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     accessorKey: "status",
     header: ({ column }) => (
@@ -679,9 +617,29 @@ export const columns = [
               >
                 Editar
               </Button>
-              {/* Editar */}
             </DropdownMenuItem>
-            <DropdownMenuItem>Detalhes</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  table.options.setOpenDetailDialog(true);
+                  table.options.setEditContract(contrato);
+                }}
+              >
+                Detalhes
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  table.options.setPayDialog(true);
+                  table.options.setEditContract(contrato);
+                }}
+              >
+                Cadastrar Pagamento
+              </Button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -696,7 +654,7 @@ export default function TableContract() {
   const [rowSelection, setRowSelection] = React.useState({});
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
   const [openDetailDialog, setOpenDetailDialog] = React.useState(false);
-  const [openPayDialog, setPayDialog] = React.useState(false);
+  const [payDialog, setPayDialog] = React.useState(false);
   const [editContract, setEditContract] = React.useState([]);
 
   const table = useReactTable({
@@ -713,6 +671,10 @@ export default function TableContract() {
     openEditDialog,
     setOpenEditDialog: setOpenEditDialog,
     setEditContract: setEditContract,
+    openDetailDialog,
+    setOpenDetailDialog: setOpenDetailDialog,
+    payDialog,
+    setPayDialog:setPayDialog,
     state: {
       sorting,
       columnFilters,
@@ -876,32 +838,120 @@ export default function TableContract() {
             </Dialog>
 
 
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
+        <Dialog
+              open={table.options.openDetailDialog}
+              onOpenChange={table.options.setOpenDetailDialog}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <p className="font-bold text-3xl">Contrato</p>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Detalhes do contrato {editContract.id}
+                  </DialogDescription>
+                </DialogHeader>
+             
+                <form className="space-y-6">
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="objetivo">Objetivo</Label>
+                <Input className="col-span-3" id="objetivo" defaultValue={editContract.objetivo} readOnly></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="descricao">Descrição</Label>
+                <Textarea
+                  readOnly
+                  placeholder="Descrição"
+                  id="descricao"
+                  className="resize-none col-span-3"
+                  defaultValue={editContract.descricao}
+                ></Textarea>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="valor">Valor</Label>
+                <Input className="col-span-3" type="float" id="valor" defaultValue={editContract.valor} readOnly></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="gestor">Gestor</Label>
+                <Input className="col-span-3" id="gestor" defaultValue={editContract.gestor} readOnly></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+              
+                <Label htmlFor="gestor">Inicio</Label>
+                <Input className="col-span-1" id="dtInicio" defaultValue={editContract.dtInicial} readOnly></Input>
+                <Label htmlFor="gestor">Termino</Label>
+                <Input className="col-span-1" id="dtFinal" defaultValue={editContract.dtFinal} readOnly></Input>
+                
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="status">Status</Label>
+                <Input className="col-span-2 capitalize" defaultValue={editContract.status} readOnly />
+              </div>
+              <DialogFooter>
+                <Button className="w-auto bg-slate-700">
+                  Fechar
+                </Button>
+              </DialogFooter>
+            </form>
+
+              </DialogContent>
+            </Dialog>
+
+
+        <Dialog
+              open={table.options.payDialog}
+              onOpenChange={table.options.setPayDialog}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <p className="font-bold text-3xl">Pagamento Contrato</p>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Cadastrar Pagamento 
+                  </DialogDescription>
+                </DialogHeader>
+             
+                <form className="space-y-6">
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="objetivo">Objetivo</Label>
+                <Input className="col-span-3" id="objetivo" defaultValue={editContract.objetivo} readOnly></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="descricao">Descrição</Label>
+                <Textarea
+                  readOnly
+                  placeholder="Descrição"
+                  id="descricao"
+                  className="resize-none col-span-3"
+                  defaultValue={editContract.descricao}
+                ></Textarea>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="valorpagamento">Valor do Pagamento</Label>
+                <Input className="col-span-2" type="float" id="valorpagamento"></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="forma">Forma</Label>
+                <Input className="col-span-3" id="forma"></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="comprovante">Comprovante</Label>
+                <Input className="col-span-3" id="comprovante" ></Input>
+              </div>
+              <DialogFooter>
+                <Button variant="outline">
+                  Cancelar
+                </Button>
+                <Button className="w-auto bg-slate-700">
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+
+              </DialogContent>
+            </Dialog>
+
       </div>
       <div className="rounded-md border">
         <Table>
@@ -954,10 +1004,6 @@ export default function TableContract() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        {/* <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div> */}
         <div className="space-x-2">
           <Button
             variant="outline"
