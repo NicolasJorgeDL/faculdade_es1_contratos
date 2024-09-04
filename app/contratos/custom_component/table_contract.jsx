@@ -13,8 +13,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, CalendarIcon, ChevronDown, MoreHorizontal } from "lucide-react";
-import { DateRange } from "react-day-picker"
+import {
+  ArrowUpDown,
+  CalendarIcon,
+  ChevronDown,
+  MoreHorizontal,
+  PlusCircle,
+} from "lucide-react";
+import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -36,13 +42,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { addDays, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 function transformToDate(string) {
-
   if (!string) {
     return new Date("1997", "01", "12");
   }
@@ -51,21 +76,20 @@ function transformToDate(string) {
   return new Date(splitedDate[2], splitedDate[1] - 1, splitedDate[0]);
 }
 
-function percentageOfValue(value, payments){
-    
-  const totalPayment = payments.reduce(totalPay,0);
-  function totalPay(total, item){
+function percentageOfValue(value, payments) {
+  const totalPayment = payments.reduce(totalPay, 0);
+  function totalPay(total, item) {
     return total + item.valor;
   }
-  const porcentagem = totalPayment /value * 100;
+  const porcentagem = (totalPayment / value) * 100;
   return `${Math.round(porcentagem)}%`;
 }
 
-function DatePickerWithRange({className}) {
+function DatePickerWithRange({ className }) {
   const [date, setDate] = React.useState({
-    from: new Date(2022, 1, 20),
-    to: addDays(new Date(2022, 1, 20), 20),
-  })
+    // from: new Date(2024, 0, 1),
+    // to: addDays(new Date(2025, 0, 1), 20),
+  });
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -83,19 +107,19 @@ function DatePickerWithRange({className}) {
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "dd/LL/y")} - {format(date.to, "dd/LL/y")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, "dd/LL/y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Selecione uma data</span>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
+            locale={ptBR}
             initialFocus
             mode="range"
             defaultMonth={date?.from}
@@ -106,9 +130,8 @@ function DatePickerWithRange({className}) {
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }
-
 
 const data = [
   {
@@ -141,8 +164,7 @@ const data = [
   {
     id: "ml198d",
     objetivo: "Software de organização de arquivos",
-    descricao:
-      "A licença do software de ",
+    descricao: "A licença do software de ",
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
@@ -168,8 +190,7 @@ const data = [
   {
     id: "ml198d",
     objetivo: "Software de organização de arquivos",
-    descricao:
-      "A licença do software de ",
+    descricao: "A licença do software de ",
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
@@ -195,8 +216,7 @@ const data = [
   {
     id: "ml198d",
     objetivo: "Software de organização de arquivos",
-    descricao:
-      "A licença do software de ",
+    descricao: "A licença do software de ",
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
@@ -222,8 +242,7 @@ const data = [
   {
     id: "ml198d",
     objetivo: "Software de organização de arquivos",
-    descricao:
-      "A licença do software de ",
+    descricao: "A licença do software de ",
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
@@ -249,8 +268,7 @@ const data = [
   {
     id: "ml198d",
     objetivo: "Software de organização de arquivos",
-    descricao:
-      "A licença do software de ",
+    descricao: "A licença do software de ",
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
@@ -594,7 +612,9 @@ export const columns = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === "asc");
+          }}
         >
           Valor
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -615,51 +635,51 @@ export const columns = [
   {
     accessorKey: "pagamentos",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Conclusão(%)
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <div variant="ghost">Conclusão(%)</div>;
     },
     cell: ({ row }) => {
       const valor = parseFloat(row.getValue("valor"));
       const payments = row.getValue("pagamentos");
-      
-      if(payments == []){
-        return <div>0%</div>
+
+      if (payments == []) {
+        return <div>0%</div>;
       }
 
-      return <div className="text-center font-medium">{percentageOfValue(valor,payments)}</div>;
+      return (
+        <div className="text-center font-medium">
+          {percentageOfValue(valor, payments)}
+        </div>
+      );
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const contrato = row.original;
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir Menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem  >Editar</DropdownMenuItem>
+              </DialogTrigger>
+
+              <DialogContent>
+                helo worda
+              </DialogContent>
+            </Dialog>
+            
+            <DropdownMenuItem>Detalhes</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -704,7 +724,70 @@ export default function TableContract() {
           className="max-w-sm"
         />
         {DatePickerWithRange("")}
-      <Button >Novo Contrato</Button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-auto bg-slate-700">
+              <PlusCircle className=" h-4 w-4 m-1" />
+              Novo Contrato
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                <h1 className="font-bold text-3xl">Novo Contrato</h1>
+              </DialogTitle>
+              <DialogDescription>
+                Criar um novo contrato no sistema
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="space-y-6">
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="objetivo">Objetivo</Label>
+                <Input className="col-span-3" id="objetivo"></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="descricao">Descrição</Label>
+                <Textarea placeholder="Descrição" id="descricao" className="resize-none col-span-3"></Textarea>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="valor">Valor</Label>
+                <Input className="col-span-3" type="float" id="valor"></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="gestor">Gestor</Label>
+                <Input className="col-span-3" id="gestor"></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="gestor">Datas</Label>
+                {DatePickerWithRange("")}
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="status">Status</Label>
+                <Select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="em contratacao">Em Contratação</SelectItem>
+                    <SelectItem value="paralisado">Paralisado</SelectItem>
+                    <SelectItem value="cancellado">Cancellado</SelectItem>
+                    <SelectItem value="concluido">Concluido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button variant="outline">Cancelar</Button>
+                <Button type="subimit" className="w-auto bg-slate-700">
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -734,7 +817,7 @@ export default function TableContract() {
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader >
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -794,7 +877,7 @@ export default function TableContract() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Anterior
           </Button>
           <Button
             variant="outline"
@@ -802,7 +885,7 @@ export default function TableContract() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Próximo
           </Button>
         </div>
       </div>
