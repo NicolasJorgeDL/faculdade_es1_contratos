@@ -85,12 +85,11 @@ function percentageOfValue(value, payments) {
   return `${Math.round(porcentagem)}%`;
 }
 
-function DatePickerWithRange({ className }) {
-  const [date, setDate] = React.useState({
-    // from: new Date(2024, 0, 1),
-    // to: addDays(new Date(2025, 0, 1), 20),
-  });
+function DatePickerWithRange({ className }, defaultValue) {
+  const [date, setDate] = React.useState(defaultValue);
 
+  console.log(defaultValue)
+  console.log("date",defaultValue)
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -107,10 +106,10 @@ function DatePickerWithRange({ className }) {
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "dd/LL/y")} - {format(date.to, "dd/LL/y")}
+                  {format(defaultValue.from, "dd/LL/y")} - {format(defaultValue.to, "dd/LL/y")}
                 </>
               ) : (
-                format(date.from, "dd/LL/y")
+                format(defaultValue.from, "dd/LL/y")
               )
             ) : (
               <span>Selecione uma data</span>
@@ -121,9 +120,10 @@ function DatePickerWithRange({ className }) {
           <Calendar
             locale={ptBR}
             initialFocus
+            
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
+            defaultMonth={defaultValue?.from}
+            selected={defaultValue}
             onSelect={setDate}
             numberOfMonths={2}
           />
@@ -142,7 +142,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -168,7 +168,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -194,7 +194,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -220,7 +220,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -246,7 +246,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -272,7 +272,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -299,7 +299,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -326,7 +326,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "em contratacao",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -353,7 +353,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "paralisado",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -380,7 +380,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "paralisado",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -407,7 +407,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "paralisado",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -434,7 +434,7 @@ const data = [
     dtInicial: "04/02/2024",
     dtFinal: "26/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "paralisado",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -461,7 +461,7 @@ const data = [
     dtInicial: "11/05/2024",
     dtFinal: "14/08/2024",
     valor: 4300,
-    status: "Em contratação",
+    status: "paralisado",
     gestor: "Alicia Freitas",
     pagamentos: [
       {
@@ -655,7 +655,7 @@ export const columns = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const contrato = row.original;
 
       return (
@@ -669,16 +669,18 @@ export const columns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Dialog>
-              <DialogTrigger asChild>
-                <DropdownMenuItem  >Editar</DropdownMenuItem>
-              </DialogTrigger>
-
-              <DialogContent>
-                helo worda
-              </DialogContent>
-            </Dialog>
-            
+            <DropdownMenuItem asChild>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  table.options.setOpenEditDialog(true);
+                  table.options.setEditContract(contrato);
+                }}
+              >
+                Editar
+              </Button>
+              {/* Editar */}
+            </DropdownMenuItem>
             <DropdownMenuItem>Detalhes</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -692,6 +694,10 @@ export default function TableContract() {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [openEditDialog, setOpenEditDialog] = React.useState(false);
+  const [openDetailDialog, setOpenDetailDialog] = React.useState(false);
+  const [openPayDialog, setPayDialog] = React.useState(false);
+  const [editContract, setEditContract] = React.useState([]);
 
   const table = useReactTable({
     data,
@@ -704,6 +710,9 @@ export default function TableContract() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    openEditDialog,
+    setOpenEditDialog: setOpenEditDialog,
+    setEditContract: setEditContract,
     state: {
       sorting,
       columnFilters,
@@ -723,7 +732,7 @@ export default function TableContract() {
           }
           className="max-w-sm"
         />
-        {DatePickerWithRange("")}
+        {DatePickerWithRange("",{})}
 
         <Dialog>
           <DialogTrigger asChild>
@@ -736,7 +745,7 @@ export default function TableContract() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                <h1 className="font-bold text-3xl">Novo Contrato</h1>
+                <p className="font-bold text-3xl">Novo Contrato</p>
               </DialogTitle>
               <DialogDescription>
                 Criar um novo contrato no sistema
@@ -750,7 +759,11 @@ export default function TableContract() {
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="descricao">Descrição</Label>
-                <Textarea placeholder="Descrição" id="descricao" className="resize-none col-span-3"></Textarea>
+                <Textarea
+                  placeholder="Descrição"
+                  id="descricao"
+                  className="resize-none col-span-3"
+                ></Textarea>
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="valor">Valor</Label>
@@ -762,7 +775,7 @@ export default function TableContract() {
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="gestor">Datas</Label>
-                {DatePickerWithRange("")}
+                {DatePickerWithRange("",{})}
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="status">Status</Label>
@@ -771,7 +784,9 @@ export default function TableContract() {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="em contratacao">Em Contratação</SelectItem>
+                    <SelectItem value="em contratacao">
+                      Em Contratação
+                    </SelectItem>
                     <SelectItem value="paralisado">Paralisado</SelectItem>
                     <SelectItem value="cancellado">Cancellado</SelectItem>
                     <SelectItem value="concluido">Concluido</SelectItem>
@@ -787,6 +802,79 @@ export default function TableContract() {
             </form>
           </DialogContent>
         </Dialog>
+
+
+        <Dialog
+              open={table.options.openEditDialog}
+              onOpenChange={table.options.setOpenEditDialog}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <p className="font-bold text-3xl">Editar Contrato</p>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Edite os campos do contrato
+                  </DialogDescription>
+                </DialogHeader>
+             
+                <form className="space-y-6">
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="objetivo">Objetivo</Label>
+                <Input className="col-span-3" id="objetivo" defaultValue={editContract.objetivo}></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="descricao">Descrição</Label>
+                <Textarea
+                  placeholder="Descrição"
+                  id="descricao"
+                  className="resize-none col-span-3"
+                  defaultValue={editContract.descricao}
+                ></Textarea>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="valor">Valor</Label>
+                <Input className="col-span-3" type="float" id="valor" defaultValue={editContract.valor}></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="gestor">Gestor</Label>
+                <Input className="col-span-3" id="gestor" defaultValue={editContract.gestor}></Input>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+              
+                <Label htmlFor="gestor">Datas</Label>
+                {DatePickerWithRange("",{
+                  from: transformToDate(editContract.dtInicial),
+                  to: transformToDate (editContract.dtFinal)
+                })}
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="status">Status</Label>
+                <Select defaultValue={editContract.status}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent >
+                    <SelectItem value="em contratacao">
+                      Em Contratação
+                    </SelectItem>
+                    <SelectItem value="paralisado">Paralisado</SelectItem>
+                    <SelectItem value="cancellado">Cancelado</SelectItem>
+                    <SelectItem value="concluido">Concluido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button variant="outline">Cancelar</Button>
+                <Button type="subimit" className="w-auto bg-slate-700">
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+
+              </DialogContent>
+            </Dialog>
+
 
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
