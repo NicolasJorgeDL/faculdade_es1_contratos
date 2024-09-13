@@ -758,6 +758,39 @@ export default function TableContract() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="status">Tipos de Contrato</Label>
+                <Select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Tipo" />
+                  </SelectTrigger>
+                  <SelectContent >
+                    <SelectItem value="servico de ti">
+                      Serviço de TI
+                    </SelectItem>
+                    <SelectItem value="obras">Obras</SelectItem>
+                    <SelectItem value="mao de obra">Mão de Obra</SelectItem>
+                    <SelectItem value="instalacao de produtos">Instalação de Produtos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center text-right gap-3">
+                <Label htmlFor="status">Empresa contratada</Label>
+                <Select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Empresa" />
+                  </SelectTrigger>
+                  <SelectContent >
+                    <SelectItem value="Microfone Soft">
+                    Microfone Soft
+                    </SelectItem>
+                    <SelectItem value="State Y">State Y</SelectItem>
+                    <SelectItem value="Seta">Seta</SelectItem>
+                    <SelectItem value="CloseAi">CloseAi</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <DialogFooter>
                 <Button variant="outline">Cancelar</Button>
                 <Button type="subimit" className="w-auto bg-slate-700">

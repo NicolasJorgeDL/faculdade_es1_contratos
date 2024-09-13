@@ -300,7 +300,7 @@ export default function TableFornecedores() {
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Pesquisar pelo nome"
+          placeholder="Pesquisar pelo nome da empresa"
           value={table.getColumn("nome")?.getFilterValue() ?? ""}
           onChange={(event) =>
             table.getColumn("nome")?.setFilterValue(event.target.value)
