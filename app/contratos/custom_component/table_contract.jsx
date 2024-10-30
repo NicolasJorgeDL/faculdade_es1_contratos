@@ -62,11 +62,15 @@ import { Textarea } from "@/components/ui/textarea";
 
 function transformToDate(string) {
   if (!string) {
-    return new Date("1997", "01", "12");
+    return new Date("1997-01-12");
   }
-  const splitedDate = string.split("/");
+  // const splitedDate = string.split("-");
+  // console.log(string)
+  // console.log(splitedDate)
 
-  return new Date(splitedDate[2], splitedDate[1] - 1, splitedDate[0]);
+  const dataretorno = new Date(string);
+  
+  return dataretorno
 }
 
 function percentageOfValue(value, payments) {
@@ -124,354 +128,34 @@ function DatePickerWithRange({ className }, defaultValue) {
   );
 }
 
-const data = [
-  {
-    id: "m5gr84i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "ml198d",
-    objetivo: "Software de organização de arquivos",
-    descricao: "A licença do software de ",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 150,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "ml198d",
-    objetivo: "Software de organização de arquivos",
-    descricao: "A licença do software de ",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "ml198d",
-    objetivo: "Software de organização de arquivos",
-    descricao: "A licença do software de ",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 2000,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "ml198d",
-    objetivo: "Software de organização de arquivos",
-    descricao: "A licença do software de ",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 2300,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "ml198d",
-    objetivo: "Software de organização de arquivos",
-    descricao: "A licença do software de ",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "em contratacao",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "paralisado",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "paralisado",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "paralisado",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "15gr65i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "04/02/2024",
-    dtFinal: "26/08/2024",
-    valor: 4300,
-    status: "paralisado",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-  {
-    id: "u5ga84i9",
-    objetivo: "Atualização dos Sistemas Operacionais",
-    descricao:
-      "Atualizar todos os computadores da empresa que utilizam 'Windows 7' para o Windows 10",
-    dtInicial: "11/05/2024",
-    dtFinal: "14/08/2024",
-    valor: 4300,
-    status: "paralisado",
-    gestor: "Alicia Freitas",
-    pagamentos: [
-      {
-        forma: "cartão de credito",
-        valor: 2000,
-        comprovante: "1272551",
-      },
-      {
-        forma: "pix",
-        valor: 500,
-        comprovante: "6158323",
-      },
-    ],
-    empresa: {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-    },
-  },
-];
+// adiciona a url base
+const apiService = new ApiService('http://localhost:3001');
+
+
+
+
+const data = apiService.servicoTodosOsContratos("/contratos");
+
+// [
+//   {
+//       id: "1",
+//       objetoContrato: "descrição do contrato",
+//       dataInicio: "2024-10-30",
+//       dataFim: "2025-01-30",
+//       latitude: "-423214",
+//       longitude: "-42489122",
+//       valor:4520,
+//       status:"em contratação",
+//       servico:{
+//         id:2,
+//         servico: "instalaão de software"
+//       },
+//       empresa: {
+//         nome: "Torradeira TI",
+//         responsavel: "Oliver Guerreiro",
+//       },
+//   },
+// ];
 
 export const columns = [
   {
@@ -490,7 +174,7 @@ export const columns = [
     ),
   },
   {
-    accessorKey: "objetivo",
+    accessorKey: "objetoContrato",
     header: ({ column }) => {
       return (
         <Button
@@ -503,11 +187,11 @@ export const columns = [
       );
     },
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("objetivo")}</div>
+      <div className="lowercase">{row.getValue("objetoContrato")}</div>
     ),
   },
   {
-    accessorKey: "dtInicial",
+    accessorKey: "dataInicio",
     header: ({ column }) => {
       return (
         <Button
@@ -521,12 +205,12 @@ export const columns = [
     },
     cell: ({ row }) => (
       <div className="lowercase text-center">
-        {format(transformToDate(row.getValue("dtInicial")), "dd/MM/yyyy")}
+        {format(transformToDate(row.getValue("dataInicio")), "dd/MM/yyyy")}
       </div>
     ),
   },
   {
-    accessorKey: "dtFinal",
+    accessorKey: "dataFim",
     header: ({ column }) => {
       return (
         <Button
@@ -540,7 +224,7 @@ export const columns = [
     },
     cell: ({ row }) => (
       <div className="lowercase text-center">
-        {format(transformToDate(row.getValue("dtFinal")), "dd/MM/yyyy")}
+        {format(transformToDate(row.getValue("dataFim")), "dd/MM/yyyy")}
       </div>
     ),
   },
@@ -568,26 +252,6 @@ export const columns = [
       }).format(valor);
 
       return <div className="text-left font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "pagamentos",
-    header: ({ column }) => {
-      return <div variant="ghost">Conclusão(%)</div>;
-    },
-    cell: ({ row }) => {
-      const valor = parseFloat(row.getValue("valor"));
-      const payments = row.getValue("pagamentos");
-
-      if (payments == []) {
-        return <div>0%</div>;
-      }
-
-      return (
-        <div className="text-center font-medium">
-          {percentageOfValue(valor, payments)}
-        </div>
-      );
     },
   },
   {
