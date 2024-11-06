@@ -59,6 +59,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import ApiService from "@/app/contratos/custom_component/ApiService";
 
 function transformToDate(string) {
   if (!string) {
@@ -111,7 +112,6 @@ function DatePickerWithRange({ className }, defaultValue) {
           <Calendar
             locale={ptBR}
             initialFocus
-            
             mode="range"
             defaultMonth={defaultValue?.from}
             selected={date}
@@ -124,74 +124,55 @@ function DatePickerWithRange({ className }, defaultValue) {
   );
 }
 
-const data = [
-  {
-      nome: "Torradeira TI",
-      responsavel: "Oliver Guerreiro",
-      numeroContratos: 4,     
-  },
-  {
-      nome: "Microfone Soft",
-      responsavel: "Phill Ates",
-      numeroContratos: 1,     
-  },
-  {
-      nome: "Loogle",
-      responsavel: "Oliver Guerreiro",
-      numeroContratos: 2,     
-  },
-  {
-      nome: "Orange",
-      responsavel: "Petes Logs",
-      numeroContratos: 2,     
-  },
-  {
-      nome: "Oculus",
-      responsavel: "Paula",
-      numeroContratos: 3,     
-  },
-  {
-      nome: "State Y",
-      responsavel: "Elton Mosca",
-      numeroContratos: 4,     
-  },
-  {
-      nome: "Mlidia",
-      responsavel: "Marta Lemos",
-      numeroContratos: 4,     
-  },
-  {
-      nome: "Seta",
-      responsavel: "Clark Chumbrega",
-      numeroContratos: 7,     
-  },
-  {
-      nome: "Odeiason",
-      responsavel: "Pepe Beijos",
-      numeroContratos: 5,     
-  },
-  {
-      nome: "CloseAi",
-      responsavel: "O próprio TPG",
-      numeroContratos: 6,     
-  },
+function excluirHandle(id){
+  const deleteFornecedor = async () => {
+    try {
+      const response = await apiService.servicoExcluirFornecedor(
+        `/empresas/${id}`
+      );
+      setData(response); // Armazena os dados
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-];
+  deleteFornecedor(); // Chama a função quando o componente monta
+}
+
+
+const apiService = new ApiService("http://localhost:8080");
 
 export const columns = [
   {
-    accessorKey: "nome",
+    accessorKey: "id",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase pl-10">{row.getValue("id")}</div>
+    ),
+  },
+  {
+    accessorKey: "empresa",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Nome
+        Empresa
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("nome")}</div>
+      <div className="capitalize">{row.getValue("empresa")}</div>
     ),
   },
   {
@@ -209,25 +190,6 @@ export const columns = [
     },
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("responsavel")}</div>
-    ),
-  },
-  {
-    accessorKey: "numeroContratos",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Contratos
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase pl-10">
-        {row.getValue("numeroContratos")}
-      </div>
     ),
   },
   {
@@ -259,6 +221,18 @@ export const columns = [
                 Editar
               </Button>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => {
+                  table.options.setOpenDeleteDialog(true);
+                  table.options.setEditFornecedor(fornecedor);
+                }}
+              >
+                Excluir
+              </Button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -272,8 +246,28 @@ export default function TableFornecedores() {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
   const [editFornecedor, setEditFornecedor] = React.useState([]);
 
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    // Função para carregar os dados
+    const fetchData = async () => {
+      try {
+        const response = await apiService.servicoTodosOsFornecedores(
+          "/empresas"
+        );
+        setData(response); // Armazena os dados
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData(); // Chama a função quando o componente monta
+  }, []);
+
+  console.log(data);
   const table = useReactTable({
     data,
     columns,
@@ -287,6 +281,8 @@ export default function TableFornecedores() {
     onRowSelectionChange: setRowSelection,
     openEditDialog,
     setOpenEditDialog: setOpenEditDialog,
+    openDeleteDialog,
+    setOpenDeleteDialog: setOpenDeleteDialog,
     setEditFornecedor: setEditFornecedor,
     state: {
       sorting,
@@ -301,9 +297,9 @@ export default function TableFornecedores() {
       <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Pesquisar pelo nome da empresa"
-          value={table.getColumn("nome")?.getFilterValue() ?? ""}
+          value={table.getColumn("empresa")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("nome")?.setFilterValue(event.target.value)
+            table.getColumn("empresa")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -349,25 +345,28 @@ export default function TableFornecedores() {
           </DialogContent>
         </Dialog>
 
-
         <Dialog
-              open={table.options.openEditDialog}
-              onOpenChange={table.options.setOpenEditDialog}
-            >
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>
-                    <p className="font-bold text-3xl">Editar Fornecedor</p>
-                  </DialogTitle>
-                  <DialogDescription>
-                    Edite as informações do fornecedor
-                  </DialogDescription>
-                </DialogHeader>
-             
-                <form className="space-y-6">
+          open={table.options.openEditDialog}
+          onOpenChange={table.options.setOpenEditDialog}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                <p className="font-bold text-3xl">Editar Fornecedor</p>
+              </DialogTitle>
+              <DialogDescription>
+                Edite as informações do fornecedor
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="space-y-6">
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="nome">nome</Label>
-                <Input className="col-span-3" id="nome" defaultValue={editFornecedor.nome}></Input>
+                <Input
+                  className="col-span-3"
+                  id="nome"
+                  defaultValue={editFornecedor.empresa}
+                ></Input>
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="responsavel">Responsavel</Label>
@@ -385,10 +384,43 @@ export default function TableFornecedores() {
                 </Button>
               </DialogFooter>
             </form>
-              </DialogContent>
-            </Dialog>
+          </DialogContent>
+        </Dialog>
 
+        <Dialog
+          open={table.options.openDeleteDialog}
+          onOpenChange={table.options.setOpenDeleteDialog}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                <p className="font-bold text-3xl">Excluir Fornecedor</p>
+              </DialogTitle>
+              <DialogDescription>
+                Não é reversivel, deseja realmente excluir o fornecedor.
+              </DialogDescription>
+            </DialogHeader>
 
+            <form className="space-y-6">
+              <div className="flex items-center text-right gap-3">
+                <Label htmlFor="empresa" className="text-2x1 font-bold">
+                  Excluir o Fornecedor: {editFornecedor.empresa} ?
+                </Label>
+              </div>
+              <div className="flex items-center text-right gap-3">
+                <Label htmlFor="responsavel">
+                  Responsavel: {editFornecedor.responsavel}
+                </Label>
+              </div>
+              <DialogFooter>
+                <Button variant="outline">Cancelar</Button>
+                <Button type="subimit" className="w-auto bg-red-700" onClick={()=>excluirHandle(editFornecedor.id)}>
+                  Excluir
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="rounded-md border">
         <Table>

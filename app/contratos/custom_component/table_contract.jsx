@@ -60,6 +60,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import ApiService from './ApiService';
+
+
 function transformToDate(string) {
   if (!string) {
     return new Date("1997-01-12");
@@ -129,13 +132,14 @@ function DatePickerWithRange({ className }, defaultValue) {
 }
 
 // adiciona a url base
-const apiService = new ApiService('http://localhost:3001');
+const apiService = new ApiService('http://localhost:8080');
 
 
 
 
-const data = apiService.servicoTodosOsContratos("/contratos");
+// const data = apiService.servicoTodosOsContratos("/contratos");
 
+// console.log(data);
 // [
 //   {
 //       id: "1",
@@ -324,6 +328,23 @@ export default function TableContract() {
   const [payDialog, setPayDialog] = React.useState(false);
   const [editContract, setEditContract] = React.useState([]);
 
+  const [data,setData] = React.useState([]);
+
+  React.useEffect(() => {
+    // Função para carregar os dados
+    const fetchData = async () => {
+      try {
+        const response = await apiService.servicoTodosOsContratos("/contratos");
+        setData(response);  // Armazena os dados
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();  // Chama a função quando o componente monta
+  }, []);  
+
+
   const table = useReactTable({
     data,
     columns,
@@ -355,9 +376,9 @@ export default function TableContract() {
       <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Pesquisar pelo objetivo"
-          value={table.getColumn("objetivo")?.getFilterValue() ?? ""}
+          value={table.getColumn("objetoContrato")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("objetivo")?.setFilterValue(event.target.value)
+            table.getColumn("objetoContrato")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -654,6 +675,7 @@ export default function TableContract() {
 
       </div>
       <div className="rounded-md border">
+
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
