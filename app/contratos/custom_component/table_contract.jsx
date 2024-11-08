@@ -67,9 +67,6 @@ function transformToDate(string) {
   if (!string) {
     return new Date("1997-01-12");
   }
-  // const splitedDate = string.split("-");
-  // console.log(string)
-  // console.log(splitedDate)
 
   const dataretorno = new Date(string);
   
@@ -83,6 +80,51 @@ function percentageOfValue(value, payments) {
   }
   const porcentagem = (totalPayment / value) * 100;
   return `${Math.round(porcentagem)}%`;
+}
+
+function DatePickerWithRangeCadastro({ className }, defaultValue, cadastroDate, setCadastroDate) {
+
+  return (
+    <div className={cn("grid gap-2", className)}>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id="date"
+            variant={"outline"}
+            className={cn(
+              "w-[300px] justify-start text-left font-normal",
+              !cadastroDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {cadastroDate?.from ? (
+              cadastroDate.to ? (
+                <>
+                  {format(cadastroDate.from, "dd/LL/y")} - {format(cadastroDate.to, "dd/LL/y")}
+                </>
+              ) : (
+                format(cadastroDate.from, "dd/LL/y")
+              )
+            ) : (
+              <span>Selecione uma data</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            locale={ptBR}
+            initialFocus
+            
+            mode="range"
+            defaultMonth={defaultValue?.from}
+            selected={cadastroDate}
+            onSelect={setCadastroDate}
+            numberOfMonths={2}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
 }
 
 function DatePickerWithRange({ className }, defaultValue) {
@@ -131,50 +173,25 @@ function DatePickerWithRange({ className }, defaultValue) {
   );
 }
 
+
+
 // adiciona a url base
 const apiService = new ApiService('http://localhost:8080');
 
-
-
-
-// const data = apiService.servicoTodosOsContratos("/contratos");
-
-// console.log(data);
-// [
-//   {
-//       id: "1",
-//       objetoContrato: "descrição do contrato",
-//       dataInicio: "2024-10-30",
-//       dataFim: "2025-01-30",
-//       latitude: "-423214",
-//       longitude: "-42489122",
-//       valor:4520,
-//       status:"em contratação",
-//       servico:{
-//         id:2,
-//         servico: "instalaão de software"
-//       },
-//       empresa: {
-//         nome: "Torradeira TI",
-//         responsavel: "Oliver Guerreiro",
-//       },
-//   },
-// ];
-
 export const columns = [
   {
-    accessorKey: "status",
+    accessorKey: "id",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Status
+        ID
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="capitalize text-center">{row.getValue("status")}</div>
+      <div className="capitalize text-center">{row.getValue("id")}</div>
     ),
   },
   {
@@ -318,6 +335,8 @@ export const columns = [
   },
 ];
 
+
+
 export default function TableContract() {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -329,21 +348,83 @@ export default function TableContract() {
   const [editContract, setEditContract] = React.useState([]);
 
   const [data,setData] = React.useState([]);
+  
+
+  const [cadastroObjetoContrato, setCadastroObjetoContrato] = React.useState();
+  const [cadastroValor, setCadastroValor] = React.useState();
+  const [cadastroDate, setCadastroDate] = React.useState();
+  const [cadastroTipoContrato, setCadastroTipoContrato] = React.useState();
+  const [cadastroEmpresa, setCadastroEmpresa] = React.useState();
+
+  const cadastrarContratoHandler = (event) =>{
+
+    cadastroDate?.from.setDate(cadastroDate?.from.getDate() + 1)
+    cadastroDate?.to.setDate(cadastroDate?.to.getDate() + 1)
+
+    const novoContrato = {
+      "objetoContrato": cadastroObjetoContrato,
+      "dataInicio": cadastroDate?.from.toLocaleDateString("ja-JP").replaceAll('/', '-'),
+      "dataFim": cadastroDate?.to.toLocaleDateString("ja-JP").replaceAll('/', '-'),
+      "latitude": -25.4447244,
+      "longitude": -54.4295481,
+      "valor": parseFloat(cadastroValor),
+      "servico": {
+          "id": parseInt(cadastroTipoContrato)
+      },
+      "empresa": {
+          "id": parseInt(cadastroEmpresa)
+      }
+    };
+
+    const efetuarCadastro = async (novoContrato) => {
+      try {
+        const response = await apiService.servicoCadastrarNovoContrato("/contratos",novoContrato);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    
+    const cadastroTeste = {
+      "objetoContrato": "1aaaaaaaaa",
+      "dataInicio": "2024-11-10",
+      "dataFim": "2025-03-30",
+      "latitude": -25.4447244,
+      "longitude": -54.4295481,
+      "valor": 102340.00,
+      "servico": {
+          "id": 1
+      },
+      "empresa": {
+          "id": 1
+      }
+  }
+
+    efetuarCadastro(novoContrato);
+
+  }
+
+  const [empresasDisponiveis,setEmpresasDisponiveis] = React.useState([]);
+  const [tiposContratosDisponiveis,setTiposContratosDisponiveis] = React.useState([]);
+
 
   React.useEffect(() => {
-    // Função para carregar os dados
+
     const fetchData = async () => {
       try {
         const response = await apiService.servicoTodosOsContratos("/contratos");
-        setData(response);  // Armazena os dados
+        const empresasResponse = await apiService.servicoTodosOsFornecedores("/empresas");
+        const tiposResponse = await apiService.servicoTodosOsTiposContratos("/servicos");
+        setData(response);  
+        setEmpresasDisponiveis(empresasResponse);
+        setTiposContratosDisponiveis(tiposResponse);
+        
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchData();  // Chama a função quando o componente monta
+    fetchData();  
   }, []);  
-
 
   const table = useReactTable({
     data,
@@ -404,81 +485,52 @@ export default function TableContract() {
 
             <form className="space-y-6">
               <div className="grid grid-cols-4 items-center text-right gap-3">
-                <Label htmlFor="objetivo">Objetivo</Label>
-                <Input className="col-span-3" id="objetivo"></Input>
+                <Label htmlFor="objetoContrato">Objetivo</Label>
+                <Input className="col-span-3" id="objetoContrato"  onChange={(e) => setCadastroObjetoContrato(e.target.value)}></Input>
               </div>
-              <div className="grid grid-cols-4 items-center text-right gap-3">
-                <Label htmlFor="descricao">Descrição</Label>
-                <Textarea
-                  placeholder="Descrição"
-                  id="descricao"
-                  className="resize-none col-span-3"
-                ></Textarea>
-              </div>
+
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="valor">Valor</Label>
-                <Input className="col-span-3" type="float" id="valor"></Input>
-              </div>
-              <div className="grid grid-cols-4 items-center text-right gap-3">
-                <Label htmlFor="gestor">Gestor</Label>
-                <Input className="col-span-3" id="gestor"></Input>
+                <Input className="col-span-3" type="float" id="valor" onChange={(e) => setCadastroValor(e.target.value)}></Input>
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="gestor">Datas</Label>
-                {DatePickerWithRange("",{})}
-              </div>
-              <div className="grid grid-cols-4 items-center text-right gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="em contratacao">
-                      Em Contratação
-                    </SelectItem>
-                    <SelectItem value="paralisado">Paralisado</SelectItem>
-                    <SelectItem value="cancellado">Cancellado</SelectItem>
-                    <SelectItem value="concluido">Concluido</SelectItem>
-                  </SelectContent>
-                </Select>
+                {DatePickerWithRangeCadastro("",{},cadastroDate,setCadastroDate)}
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="status">Tipos de Contrato</Label>
-                <Select>
+                <Select onValueChange={setCadastroTipoContrato} value={cadastroTipoContrato} >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Tipo" />
                   </SelectTrigger>
                   <SelectContent >
-                    <SelectItem value="servico de ti">
-                      Serviço de TI
-                    </SelectItem>
-                    <SelectItem value="obras">Obras</SelectItem>
-                    <SelectItem value="mao de obra">Mão de Obra</SelectItem>
-                    <SelectItem value="instalacao de produtos">Instalação de Produtos</SelectItem>
+                  {tiposContratosDisponiveis.map((tipo, index) => (
+                      <SelectItem key={index} value={tipo.id}>
+                        {tipo.servico}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid grid-cols-4 items-center text-right gap-3">
                 <Label htmlFor="status">Empresa contratada</Label>
-                <Select>
+                <Select  onValueChange={setCadastroEmpresa} value={cadastroEmpresa}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Empresa" />
                   </SelectTrigger>
                   <SelectContent >
-                    <SelectItem value="Microfone Soft">
-                    Microfone Soft
-                    </SelectItem>
-                    <SelectItem value="State Y">State Y</SelectItem>
-                    <SelectItem value="Seta">Seta</SelectItem>
-                    <SelectItem value="CloseAi">CloseAi</SelectItem>
+                  {empresasDisponiveis.map((empresa, index) => (
+                      <SelectItem key={index} value={empresa.id}>
+                        {empresa.empresa}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <DialogFooter>
                 <Button variant="outline">Cancelar</Button>
-                <Button type="subimit" className="w-auto bg-slate-700">
+                <Button type="subimit" className="w-auto bg-slate-700" onClick={()=>{cadastrarContratoHandler()}}>
                   Salvar
                 </Button>
               </DialogFooter>

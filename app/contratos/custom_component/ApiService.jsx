@@ -24,6 +24,15 @@ class ApiService {
       throw new Error(`Erro ao buscar dados do fornecedor: ${error.message}`);
     }
   }
+  
+  async servicoTodosOsTiposContratos(endpoint) {
+    try {
+      const response = await this.api.get(endpoint);
+      return response.data.content;
+    } catch (error) {
+      throw new Error(`Erro ao buscar dados dos tipos de contratos: ${error.message}`);
+    }
+  }
 
   async servicoExcluirFornecedor(endpoint) {
     try {
@@ -34,6 +43,20 @@ class ApiService {
     }
   }
   
+  async servicoCadastrarNovoContrato(endpoint,contrato) {
+    try {
+      const response = await this.api.post(endpoint,contrato, {
+        headers: {
+          'Content-Type': 'application/json',  // Enviando como JSON
+        },
+      });
+      return response.data.content;
+    } catch (error) {
+      throw new Error(`Erro ao cadastrar Contrato: ${error.message}`);
+    }
+  }
+
+
 }
 
 export default ApiService;
